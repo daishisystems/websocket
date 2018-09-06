@@ -5,7 +5,6 @@
 package main
 
 import (
-	"bytes"
 	"log"
 	"net/http"
 	"time"
@@ -48,6 +47,11 @@ type Client struct {
 	send chan []byte
 }
 
+type Payload struct {
+	message []byte
+	client  *Client
+}
+
 // readPump pumps messages from the websocket connection to the hub.
 //
 // The application runs readPump in a per-connection goroutine. The application
@@ -69,8 +73,8 @@ func (c *Client) readPump() {
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		c.hub.broadcast <- message
+		message = []byte("MESSAGE RECEIVED")
+		c.hub.broadcast <- &Payload{client: c, message: message}
 	}
 }
 
